@@ -9,20 +9,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_URL = "https://api.capacities.io"
+API_VERSION = "0.1.0"
 
 
 class CapacitiesError(Exception):
-    """Base exception for Capacities API errors."""
     pass
 
 
 class AuthenticationError(CapacitiesError):
-    """Raised when the API token is missing or invalid."""
     pass
 
 
 class RateLimitError(CapacitiesError):
-    """Raised when the API rate limit is exceeded."""
     pass
 
 
@@ -52,6 +50,15 @@ class CapacitiesClient:
         response = self._http.post(path, json=body)
         self._raise_for_status(response)
         return response.json()
+
+    def _patch(self, path: str, body: dict[str, Any]) -> Any:
+        response = self._http.patch(path, json=body)
+        self._raise_for_status(response)
+        return response.json()
+
+    def _delete(self, path: str, params: dict[str, Any] | None = None) -> None:
+        response = self._http.delete(path, params=params)
+        self._raise_for_status(response)
 
     def _raise_for_status(self, response: httpx.Response) -> None:
         if response.status_code == 401:

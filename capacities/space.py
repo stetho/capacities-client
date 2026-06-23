@@ -14,19 +14,8 @@ class SpaceAPI:
     def __init__(self, client: CapacitiesClient):
         self._client = client
 
-    def get_spaces(self) -> list[Space]:
-        data = self._client._get("/spaces")
-        return [
-            Space(id=s["id"], title=s.get("title", "Untitled"))
-            for s in data.get("spaces", [])
-        ]
-
-    def get_space_info(self, space_id: str) -> Space:
-        spaces = self.get_spaces()
-        title = next((s.title for s in spaces if s.id == space_id), space_id)
-
-        data = self._client._get("/space-info", params={"spaceid": space_id})
-
+    def get_structures(self) -> Space:
+        data = self._client._get("/space/structures")
         structures = []
         for s in data.get("structures", []):
             props = [
@@ -64,5 +53,4 @@ class SpaceAPI:
                     raw=s,
                 )
             )
-
-        return Space(id=space_id, title=title, structures=structures)
+        return Space(id="default", title="My Space", structures=structures)
